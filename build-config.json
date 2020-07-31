@@ -1,0 +1,25 @@
+{
+  "nightlyBuildURL": "url",
+  "platform": "linux",
+  "password": {
+    "linux": "1",
+    "windows": null
+  },
+  "targetcommit": {
+    "flag": false,
+    "commit": "35594c4"
+  },
+  "latestcommit": "9237011",
+  "linux": {
+    "chromiumBuild": "chromium-browser-unstable_86.0.4209.0-1_amd64.deb",
+    "path": "linux_x64_SUCCEED",
+    "suffix": "deb",
+    "md5": "9ce495198704ee1313fea40b743d2713"
+  },
+  "windows": {
+    "chromiumBuild": "chrome-win32.zip",
+    "path": "win_x64_SUCCEED",
+    "suffix": "zip",
+    "md5": "91b9e3b8bc821a2be9f78b1cfd5de671"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "workload-toolkit",
+  "version": "0.1.0",
+  "description": "Automation test toolkit for workload testing.",
+  "main": "./src/main.js",
+  "directories": {
+    "lib": "lib",
+    "util": "util",
+    "src": "src"
+  },
+  "dependencies": {
+    "moment": "^2.22.2",
+    "unzip": "^0.1.11"
+  },
+  "devDependencies": {
+    "fast-csv": "^2.4.1",
+    "cheerio": "*",
+    "playwright": "^1.2.1"
+  },
+  "scripts": {
+    "preinstall": "npx npm-force-resolutions",
+    "start": "node ./src/main.js",
+    "downloadbuild": "node ./util/download-build.js",
+    "installbuild": "node ./util/install-build.js",
+    "test": "node ./util/run-test.js"
+  },
+  "resolutions": {
+    "graceful-fs": "4.2.4"
+  }
+}
