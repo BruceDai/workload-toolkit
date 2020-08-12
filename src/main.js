@@ -1,4 +1,4 @@
-console.log("Test start....");
+console.log("===== Start workload testing... ======");
 
 const childProcess = require("child_process");
 
@@ -35,8 +35,8 @@ const childProcess = require("child_process");
     console.log(processRunTest.stderr.toString());
     process.exit(1);
   }
-})().then(function() {
-  console.log("Test completed!");
-}).catch(function(err) {
-  console.log("Error: " + err);
+})().then(() => {
+  console.log("========== Completed workload testing! =======");
+}).catch((err) => {
+  console.log(`Error:${err}`);
 });

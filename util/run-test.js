@@ -1,8 +1,10 @@
 const { chromium } = require('playwright');
 const os = require("os");
+require("../lib/base.js");
 const settings = require("../settings.js");
-
-let BACKEND_CONFIG = settings.BACKEND_CONFIG;
+const { DEBUG_FLAG } = require('../settings.js');
+const TARGET_BACKEND = settings.TARGET_BACKEND;
+const BACKEND_CONFIG = settings.BACKEND_CONFIG;
 let chromium_path = '/usr/bin/chromium-browser-unstable';
 
 const launch_workload_page = async (args = ['--no-sandbox']) => {
@@ -14,39 +16,47 @@ const launch_workload_page = async (args = ['--no-sandbox']) => {
 };
 
 const get_category_list = async () => {
-  let category_list = [];
+  if (DEBUG_FLAG) {
+    return ['Image Classification'];
+  } else {
+    let category_list = [];
 
-  const [browser, page] = await launch_workload_page();
+    const [browser, page] = await launch_workload_page();
 
-  // category select
-  const catgOptSelect = await page.$$('select#categoryselect option');
-  for (let opt of catgOptSelect) {
-    let catg = await opt.evaluate(element => element.textContent);
-    category_list.push(catg);
+    // category select
+    const catgOptSelect = await page.$$('select#categoryselect option');
+    for (let opt of catgOptSelect) {
+      let catg = await opt.evaluate(element => element.textContent);
+      category_list.push(catg);
+    }
+
+    await browser.close();
+    return category_list;
   }
-
-  await browser.close();
-  return category_list;
 };
 
 
 const get_model_list = async (category) => {
-  let model_list = [];
+  if (DEBUG_FLAG) {
+    return ['SqueezeNet (TFLite)', 'SqueezeNet (ONNX)'];
+  } else {
+    let model_list = [];
 
-  const [browser, page] = await launch_workload_page();
+    const [browser, page] = await launch_workload_page();
 
-  // category select
-  const catgSelect = await page.$('select#categoryselect');
-  await catgSelect.type(category);
+    // category select
+    const catgSelect = await page.$('select#categoryselect');
+    await catgSelect.type(category);
 
-  const modelOptSelect = await page.$$('select#modelselect1 option');
-  for (let opt of modelOptSelect) {
-    let model = await opt.evaluate(element => element.textContent);
-    model_list.push(model);
+    const modelOptSelect = await page.$$('select#modelselect1 option');
+    for (let opt of modelOptSelect) {
+      let model = await opt.evaluate(element => element.textContent);
+      model_list.push(model);
+    }
+
+    await browser.close();
+    return model_list;
   }
-
-  await browser.close();
-  return model_list;
 };
 
 const get_skip_status = (category, model, backend) => {
@@ -83,56 +93,69 @@ const execute_workload_test = async (category, model, config) => {
   await page.fill('#iterations', settings.ITERATIONS.toString());
 
   await page.click('#runbutton');
-
+  let score;
+  let note = '';
   try {
+    if (category === 'Image Classification') {
+      await page.waitForSelector("#imageclassificationlabels").then(async () => {
+        for (let i = 0; i < 3; i++) {
+          const labelEle = await page.$('#label'+i);
+          const label = await labelEle.evaluate(element => element.textContent);
+          const probEle = await page.$('#prob'+i);
+          const prob = await probEle.evaluate(element => element.textContent);
+          // console.log(`${label} -- ${prob}`); 
+          note += '/' + label + ':' + prob;
+          // console.log(`note: ${note}`); 
+        }
+      });
+    }
+
     await page.waitForSelector("em").then(async () => {
       const resultElement = await page.$('em');
-      const score = await resultElement.evaluate(element => element.textContent);
-      console.log(`${config.backend} + ${config.prefer} + ${model}: ${score}`);
+      score = await resultElement.evaluate(element => element.textContent);
+      // console.log(`${config.backend} + ${config.prefer} + ${model}: ${score}`);
     });
   } catch (e) {
     console.log(`${config.backend} + ${config.prefer} + ${model}: ${e}`);
   }
 
   await browser.close();
+  return score + note;
 };
 
 (async () => {
-  // for Windows
-  if (os.type() === 'Windows_NT') {
-    BACKEND_CONFIG['DirectML'] = {
-      args: ['--no-sandbox', '--use-dml', '--enable-features=WebML'],
-      backend: 'WebNN',
-      prefer: 'SUSTAINED_SPEED'
-    };
-  }
+  console.log(`>>> 3-Start test at ${(new Date()).toLocaleTimeString()}`);
+  await MODULE_CSV.open();
 
-  console.log(`>>> Start test at ${(new Date()).toLocaleTimeString()}`);
+  // get category list
+  const category_list =  await get_category_list();
 
-  if (settings.DEBUG_FLAG) {
-    // for debugging  'SqueezeNet (TFLite)' 'Inception v4 Quant (TFLite)'
-    await execute_workload_test('Image Classification', 'SqueezeNet (TFLite)', {backend: 'WASM', prefer: 'NONE', args: ['--no-sandbox']});
-  } else {
-    // get category list
-    const category_list =  await get_category_list();
-    for (let category of category_list) {
-      console.log(`#### ${category}`);
-      let model_list = await get_model_list(category);
-      for (let model of model_list) {
-          for (let key in BACKEND_CONFIG) {
-            const sub_config = BACKEND_CONFIG[key];
-            let is_skip = get_skip_status(category, model, key);
-            if (is_skip) {
-              console.log(`Skip test ${sub_config.backend} + ${sub_config.prefer} + ${category} / ${model}`);
-              continue;
-            }
-            await execute_workload_test(category, model, sub_config);
+  for (let category of category_list) {
+    console.log(`###### ${category} ######`);
+    let model_list = await get_model_list(category);
+    for (let model of model_list) {
+      console.log(`$$$$$$ ${model} $$$$$$`);
+        let content = {
+          category: category,
+          model: model,
+        };
+        for (let backend of TARGET_BACKEND) {
+          const sub_config = BACKEND_CONFIG[backend];
+          let is_skip = get_skip_status(category, model, backend);
+          if (is_skip) {
+            console.log(`Skip test ${sub_config.backend} + ${sub_config.prefer} + ${category} / ${model}`);
+            continue;
           }
-      }
+          content[backend.toLocaleLowerCase()] = await execute_workload_test(category, model, sub_config);
+          console.log(`${backend} --- ${content[backend.toLocaleLowerCase()]}`)
+        }
+        await MODULE_CSV.write(content);
     }
   }
+
+  await MODULE_CSV.close();
 })().then(() => {
-  console.log(`>>> Completed test at ${(new Date()).toLocaleTimeString()}`);
+  console.log(`>>> 3-Completed test at ${(new Date()).toLocaleTimeString()}`);
 }).catch((err) => {
   throw err;
 });

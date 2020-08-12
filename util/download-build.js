@@ -53,7 +53,7 @@ const getLatestCommit = async (remoteURL) => {
       downloadCommit = ele("a")[ele("a").length-1]["attribs"]["href"].slice(0, -1);
     });
   }
-  console.log(`Latest commit is '${downloadCommit}'.`);
+  console.log(`1.1-Got latest commit as '${downloadCommit}'.`);
   await MODULE_JSON.writeLatestCommit(downloadCommit);
   return downloadCommit;
 };
@@ -81,7 +81,7 @@ const getChromiumName = async (suffix) => {
 };
 
 (async () => {
-  console.log(`>>> Start download nightly build at ${(new Date()).toLocaleTimeString()}.`);
+  console.log(`>>> 1-Start download nightly build at ${(new Date()).toLocaleTimeString()}.`);
   downloadCommit = await getLatestCommit(remoteURL);
 
   let downloadChromiumPath = remoteURL + "/" + downloadCommit + "/" + MODULE_JSON.getPath() + "/";
@@ -90,18 +90,18 @@ const getChromiumName = async (suffix) => {
 
   if (fs.existsSync(storeFileLocation)) {
     if (await MODULE_TOOLS.checkMD5(storeFileLocation)) {
-      console.log(`${downloadPackageName} of ${downloadCommit} has already been downloaded, MD5 checking also passed, no need download again!`);
+      console.log(`${downloadPackageName} of ${downloadCommit} has already been downloaded, no need download again!`);
     } else {
       fs.unlinkSync(storeFileLocation);
       console.log("Failed to MD5 check local package, please download again!");
       process.exit(1);
     }
   } else {
-    console.log(`Downloading ${downloadChromiumPath}${downloadPackageName} ...`);
+    console.log(`1.2-Downloading ${downloadChromiumPath}${downloadPackageName} ...`);
     await MODULE_TOOLS.download(downloadChromiumPath + downloadPackageName);
   }
 })().then(() => {
-  console.log(`>>> Completed downloading at ${(new Date()).toLocaleTimeString()}.`);
+  console.log(`>>> 1-Completed downloading at ${(new Date()).toLocaleTimeString()}.`);
 }).catch((err) => {
   throw err;
 });

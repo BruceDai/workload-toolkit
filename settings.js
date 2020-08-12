@@ -2,10 +2,13 @@
 // https://github.com/intel/webml-polyfill/wiki/WebML-Examples-Results-on-Different-Backends-and-Platforms
 
 const WORKLOAD_URL = "http://localhost:8080/workload";
+// const TARGET_BACKEND = ['WASM', 'WebGL', 'DNNL', 'clDNN',
+//                         'IE-MKLDNN', 'IE-clDNN', 'DirectML'];
+const TARGET_BACKEND = ['WASM', 'WebGL', 'DNNL', 'clDNN'];
 const DEBUG_FLAG = true;
 const ITERATIONS = 1;
 
-let BACKEND_CONFIG = {
+const BACKEND_CONFIG = {
   'WASM': {
     args: ['--no-sandbox'],
     backend: 'WASM',
@@ -33,6 +36,11 @@ let BACKEND_CONFIG = {
   },
   'IE-clDNN': {
     args: ['--no-sandbox', '--use-inference-engine', '--enable-features=WebML'],
+    backend: 'WebNN',
+    prefer: 'SUSTAINED_SPEED'
+  },
+  'DirectML': { // Only for Windows
+    args: ['--no-sandbox', '--use-dml', '--enable-features=WebML'],
     backend: 'WebNN',
     prefer: 'SUSTAINED_SPEED'
   }
@@ -155,6 +163,7 @@ const MODEL_FILTER= {
 
 module.exports = {
   WORKLOAD_URL: WORKLOAD_URL,
+  TARGET_BACKEND: TARGET_BACKEND, 
   DEBUG_FLAG: DEBUG_FLAG,
   ITERATIONS: ITERATIONS,
   BACKEND_CONFIG: BACKEND_CONFIG,

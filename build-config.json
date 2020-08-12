@@ -1,8 +1,7 @@
 {
   "nightlyBuildURL": "url",
-  "platform": "linux",
   "password": {
-    "linux": "1",
+    "linux": "pwd",
     "windows": null
   },
   "targetcommit": {
