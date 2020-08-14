@@ -99,9 +99,8 @@ const getChromiumName = async (suffix) => {
   } else {
     console.log(`1.2-Downloading ${downloadChromiumPath}${downloadPackageName} ...`);
     await MODULE_TOOLS.download(downloadChromiumPath + downloadPackageName);
+    console.log(`>>> 1-Completed downloading at ${(new Date()).toLocaleTimeString()}.`);
   }
-})().then(() => {
-  console.log(`>>> 1-Completed downloading at ${(new Date()).toLocaleTimeString()}.`);
-}).catch((err) => {
+})().catch((err) => {
   throw err;
 });

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "moment": "^2.22.2",
+    "sleep-promise": "^8.0.1",
     "unzip": "^0.1.11"
   },
   "devDependencies": {
@@ -22,7 +23,9 @@
     "start": "node ./src/main.js",
     "downloadbuild": "node ./util/download-build.js",
     "installbuild": "node ./util/install-build.js",
-    "test": "node ./util/run-test.js"
+    "test": "node ./util/run-test.js",
+    "rc": "node ./src/main.js baseline",
+    "rc-full": "node ./src/main.js without-baseline"
   },
   "resolutions": {
     "graceful-fs": "4.2.4"

@@ -4,9 +4,16 @@
 const WORKLOAD_URL = "http://localhost:8080/workload";
 // const TARGET_BACKEND = ['WASM', 'WebGL', 'DNNL', 'clDNN',
 //                         'IE-MKLDNN', 'IE-clDNN', 'DirectML'];
-const TARGET_BACKEND = ['WASM', 'WebGL', 'DNNL', 'clDNN'];
+const TARGET_BACKEND = ['WASM'];
 const DEBUG_FLAG = true;
 const ITERATIONS = 1;
+
+// flag: true for regression check, false for normal workload testing
+const REGRESSION_FLAG = true; // default false
+
+// if purpose of 'regression-check', please set variable DEV_CHROMIUM_PATH 
+// as a absolute path of deb package for Linux or chrome.exe for Windows
+const DEV_CHROMIUM_PATH = ''; 
 
 const BACKEND_CONFIG = {
   'WASM': {
@@ -162,6 +169,8 @@ const MODEL_FILTER= {
 };
 
 module.exports = {
+  REGRESSION_FLAG: REGRESSION_FLAG,
+  DEV_CHROMIUM_PATH: DEV_CHROMIUM_PATH,
   WORKLOAD_URL: WORKLOAD_URL,
   TARGET_BACKEND: TARGET_BACKEND, 
   DEBUG_FLAG: DEBUG_FLAG,

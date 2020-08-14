@@ -1,11 +1,13 @@
 const { chromium } = require('playwright');
 const os = require("os");
+const sleep = require("sleep-promise");
 require("../lib/base.js");
 const settings = require("../settings.js");
-const { DEBUG_FLAG } = require('../settings.js');
-const TARGET_BACKEND = settings.TARGET_BACKEND;
-const BACKEND_CONFIG = settings.BACKEND_CONFIG;
+
+//TODO chromium_path
 let chromium_path = '/usr/bin/chromium-browser-unstable';
+
+const TEST_PURPOSE = process.argv.slice(2)[0];
 
 const launch_workload_page = async (args = ['--no-sandbox']) => {
   const browser = await chromium.launch({headless: false, executablePath: chromium_path, args: args});
@@ -16,7 +18,8 @@ const launch_workload_page = async (args = ['--no-sandbox']) => {
 };
 
 const get_category_list = async () => {
-  if (DEBUG_FLAG) {
+  if (settings.REGRESSION_FLAG || settings.DEBUG_FLAG) {
+    // Use Image Classification workload for regression checking of dev build.
     return ['Image Classification'];
   } else {
     let category_list = [];
@@ -37,8 +40,8 @@ const get_category_list = async () => {
 
 
 const get_model_list = async (category) => {
-  if (DEBUG_FLAG) {
-    return ['SqueezeNet (TFLite)', 'SqueezeNet (ONNX)'];
+  if (settings.DEBUG_FLAG) {
+    return ['SqueezeNet (TFLite)'];
   } else {
     let model_list = [];
 
@@ -139,8 +142,8 @@ const execute_workload_test = async (category, model, config) => {
           category: category,
           model: model,
         };
-        for (let backend of TARGET_BACKEND) {
-          const sub_config = BACKEND_CONFIG[backend];
+        for (let backend of settings.TARGET_BACKEND) {
+          const sub_config = settings.BACKEND_CONFIG[backend];
           let is_skip = get_skip_status(category, model, backend);
           if (is_skip) {
             console.log(`Skip test ${sub_config.backend} + ${sub_config.prefer} + ${category} / ${model}`);
@@ -148,12 +151,16 @@ const execute_workload_test = async (category, model, config) => {
           }
           content[backend.toLocaleLowerCase()] = await execute_workload_test(category, model, sub_config);
           console.log(`${backend} --- ${content[backend.toLocaleLowerCase()]}`)
+          await sleep(300000);
         }
         await MODULE_CSV.write(content);
     }
   }
 
   await MODULE_CSV.close();
+  if (TEST_PURPOSE === 'regression-check') {
+    // do regression checking of dev build
+  }
 })().then(() => {
   console.log(`>>> 3-Completed test at ${(new Date()).toLocaleTimeString()}`);
 }).catch((err) => {
