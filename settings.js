@@ -5,15 +5,26 @@ const WORKLOAD_URL = "http://localhost:8080/workload";
 // const TARGET_BACKEND = ['WASM', 'WebGL', 'DNNL', 'clDNN',
 //                         'IE-MKLDNN', 'IE-clDNN', 'DirectML'];
 const TARGET_BACKEND = ['WASM'];
-const DEBUG_FLAG = true;
 const ITERATIONS = 1;
 
 // flag: true for regression check, false for normal workload testing
-const REGRESSION_FLAG = true; // default false
+const REGRESSION_FLAG = false; // default false
 
+const DEBUG_FLAG = true;
+
+
+// const REGRESSION_TEST = {
+//   'Image Classification': ['MobileNet v2 (TFLite)', 'SqueezeNet (TFLite)', 
+//                            'Inception v3 (TFLite)', 'Inception v4 (TFLite)',
+//                            'ResNet50 v2 (ONNX)']
+// };
+
+const REGRESSION_TEST = {
+  'Image Classification': ['SqueezeNet (TFLite)']
+};
 // if purpose of 'regression-check', please set variable DEV_CHROMIUM_PATH 
 // as a absolute path of deb package for Linux or chrome.exe for Windows
-const DEV_CHROMIUM_PATH = ''; 
+const DEV_CHROMIUM_PATH = '/home/dev/workspace/bruce/workload-toolkit/output-1/chromiumBuild/9237011/linux_x64_SUCCEED/chromium-browser-unstable_86.0.4209.0-1_amd64.deb'; 
 
 const BACKEND_CONFIG = {
   'WASM': {
@@ -169,13 +180,14 @@ const MODEL_FILTER= {
 };
 
 module.exports = {
-  REGRESSION_FLAG: REGRESSION_FLAG,
-  DEV_CHROMIUM_PATH: DEV_CHROMIUM_PATH,
-  WORKLOAD_URL: WORKLOAD_URL,
-  TARGET_BACKEND: TARGET_BACKEND, 
   DEBUG_FLAG: DEBUG_FLAG,
+  WORKLOAD_URL: WORKLOAD_URL,
+  TARGET_BACKEND: TARGET_BACKEND,
   ITERATIONS: ITERATIONS,
   BACKEND_CONFIG: BACKEND_CONFIG,
   CATEGORY_FILTER: CATEGORY_FILTER,
-  MODEL_FILTER: MODEL_FILTER
+  MODEL_FILTER: MODEL_FILTER,
+  REGRESSION_FLAG: REGRESSION_FLAG,
+  REGRESSION_TEST: REGRESSION_TEST,
+  DEV_CHROMIUM_PATH: DEV_CHROMIUM_PATH,
 };

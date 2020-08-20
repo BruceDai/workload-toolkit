@@ -1,9 +1,9 @@
 require("../lib/base.js");
-const fs = require("fs");
-const path = require("path");
-const http = require("http");
-const url = require("url");
-const cheerio = require("cheerio");
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const url = require('url');
+const cheerio = require('cheerio');
 
 let htmlElement;
 let downloadCommit;
@@ -45,7 +45,7 @@ const getLatestCommit = async (remoteURL) => {
     if (htmlElement.indexOf(specifyBuild) !== -1) {
       downloadCommit = specifyBuild;
     } else {
-      console.log("Please check config.json commit, it was invalid");
+      console.log("Please check build-config.json commit, it was invalid");
     }
   } else if (typeof(specifyBuild) == "boolean") {
     await getHtmlELE(remoteURL).then((ele) => {
@@ -99,7 +99,6 @@ const getChromiumName = async (suffix) => {
   } else {
     console.log(`1.2-Downloading ${downloadChromiumPath}${downloadPackageName} ...`);
     await MODULE_TOOLS.download(downloadChromiumPath + downloadPackageName);
-    console.log(`>>> 1-Completed downloading at ${(new Date()).toLocaleTimeString()}.`);
   }
 })().catch((err) => {
   throw err;

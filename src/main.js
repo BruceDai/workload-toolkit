@@ -17,29 +17,24 @@ const childProcess = require("child_process");
       ["./util/download-build.js"],
       {stdio: [process.stdin, process.stdout, "pipe"]}
     );
-  
     if (processDownload.stderr.toString() != "") {
       console.log(processDownload.stderr.toString());
       process.exit(1);
     }
-  
     let processInstall = await childProcess.spawnSync(
       "node",
       ["./util/install-build.js"],
       {stdio: [process.stdin, process.stdout, "pipe"]}
     );
-  
     if (processInstall.stderr.toString() != "") {
       console.log(processInstall.stderr.toString());
       process.exit(1);
     }
-  
     let processRunTest = await childProcess.spawnSync(
       "node",
       ["./util/run-test.js"],
       {stdio: [process.stdin, process.stdout, "pipe"]}
     );
-  
     if (processRunTest.stderr.toString() != "") {
       console.log(processRunTest.stderr.toString());
       process.exit(1);
@@ -48,22 +43,22 @@ const childProcess = require("child_process");
 
   if (args.length === 1) {
     // re-run test for egression check
-    let processInstallRC = await childProcess.spawnSync(
+    let RunRegressionTestInstall = await childProcess.spawnSync(
       "node",
-      ["./util/install-build.js regression-check"],
+      ["./util/install-build.js", "regression-test"],
       {stdio: [process.stdin, process.stdout, "pipe"]}
     );
-    if (processInstallRC.stderr.toString() != "") {
-      console.log(processInstallRC.stderr.toString());
+    if (RunRegressionTestInstall.stderr.toString() != "") {
+      console.log(RunRegressionTestInstall.stderr.toString());
       process.exit(1);
     }
-    let processRunTestRC = await childProcess.spawnSync(
+    let processRunRegressionTest = await childProcess.spawnSync(
       "node",
-      ["./util/run-test.js regression-check"],
+      ["./util/run-test.js", "regression-test"],
       {stdio: [process.stdin, process.stdout, "pipe"]}
     );
-    if (processRunTestRC.stderr.toString() != "") {
-      console.log(processRunTestRC.stderr.toString());
+    if (processRunRegressionTest.stderr.toString() != "") {
+      console.log(processRunRegressionTest.stderr.toString());
       process.exit(1);
     }
     console.log("========== Completed Regression testing! =======");

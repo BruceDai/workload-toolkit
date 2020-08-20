@@ -1,15 +1,23 @@
 const { chromium } = require('playwright');
-const os = require("os");
-const sleep = require("sleep-promise");
+const path = require('path');
+const sleep = require('sleep-promise');
 require("../lib/base.js");
 const settings = require("../settings.js");
 
-//TODO chromium_path
-let chromium_path = '/usr/bin/chromium-browser-unstable';
-
-const TEST_PURPOSE = process.argv.slice(2)[0];
+const RUN_DEV_BUILD = process.argv.slice(2)[0] === 'regression-test';
 
 const launch_workload_page = async (args = ['--no-sandbox']) => {
+  let chromium_path;
+
+  if (TEST_PLATFORM == "linux") {
+    chromium_path = '/usr/bin/chromium-browser-unstable';
+  } else if (TEST_PLATFORM == "windows") {
+    chromium_path = path.join(GET_CHROMIUM_PATH(), MODULE_JSON.getPath(), 'Chrome-bin', 'chrome.exe');
+    if (RUN_DEV_BUILD) {
+      chromium_path = settings.DEV_CHROMIUM_PATH;
+    }
+  }
+
   const browser = await chromium.launch({headless: false, executablePath: chromium_path, args: args});
   const context = await browser.newContext({ignoreHTTPSErrors: true});
   const page = await context.newPage();
@@ -20,7 +28,7 @@ const launch_workload_page = async (args = ['--no-sandbox']) => {
 const get_category_list = async () => {
   if (settings.REGRESSION_FLAG || settings.DEBUG_FLAG) {
     // Use Image Classification workload for regression checking of dev build.
-    return ['Image Classification'];
+    return Object.keys(settings.REGRESSION_TEST);
   } else {
     let category_list = [];
 
@@ -40,8 +48,8 @@ const get_category_list = async () => {
 
 
 const get_model_list = async (category) => {
-  if (settings.DEBUG_FLAG) {
-    return ['SqueezeNet (TFLite)'];
+  if (settings.REGRESSION_FLAG || settings.DEBUG_FLAG) {
+    return settings.REGRESSION_TEST[category];
   } else {
     let model_list = [];
 
@@ -106,9 +114,7 @@ const execute_workload_test = async (category, model, config) => {
           const label = await labelEle.evaluate(element => element.textContent);
           const probEle = await page.$('#prob'+i);
           const prob = await probEle.evaluate(element => element.textContent);
-          // console.log(`${label} -- ${prob}`); 
           note += '/' + label + ':' + prob;
-          // console.log(`note: ${note}`); 
         }
       });
     }
@@ -116,7 +122,6 @@ const execute_workload_test = async (category, model, config) => {
     await page.waitForSelector("em").then(async () => {
       const resultElement = await page.$('em');
       score = await resultElement.evaluate(element => element.textContent);
-      // console.log(`${config.backend} + ${config.prefer} + ${model}: ${score}`);
     });
   } catch (e) {
     console.log(`${config.backend} + ${config.prefer} + ${model}: ${e}`);
@@ -126,15 +131,20 @@ const execute_workload_test = async (category, model, config) => {
   return score + note;
 };
 
+const show_regression_report = () => {
+
+};
+
 (async () => {
   console.log(`>>> 3-Start test at ${(new Date()).toLocaleTimeString()}`);
-  await MODULE_CSV.open();
+
+  await MODULE_CSV.open(RUN_DEV_BUILD);
 
   // get category list
   const category_list =  await get_category_list();
 
   for (let category of category_list) {
-    console.log(`###### ${category} ######`);
+    console.log(`###### Start test ${category} workload at ${(new Date()).toLocaleTimeString()} ######`);
     let model_list = await get_model_list(category);
     for (let model of model_list) {
       console.log(`$$$$$$ ${model} $$$$$$`);
@@ -151,15 +161,16 @@ const execute_workload_test = async (category, model, config) => {
           }
           content[backend.toLocaleLowerCase()] = await execute_workload_test(category, model, sub_config);
           console.log(`${backend} --- ${content[backend.toLocaleLowerCase()]}`)
-          await sleep(300000);
+          // await sleep(300000);
         }
         await MODULE_CSV.write(content);
     }
   }
 
   await MODULE_CSV.close();
-  if (TEST_PURPOSE === 'regression-check') {
-    // do regression checking of dev build
+
+  if (RUN_DEV_BUILD) {
+    show_regression_report();
   }
 })().then(() => {
   console.log(`>>> 3-Completed test at ${(new Date()).toLocaleTimeString()}`);

@@ -1,5 +1,5 @@
 {
-  "nightlyBuildURL": "URL",
+  "nightlyBuildURL": "",
   "password": {
     "linux": "1",
     "windows": null
@@ -8,7 +8,7 @@
     "flag": false,
     "commit": "35594c4"
   },
-  "latestcommit": "9237011",
+  "latestcommit": "e709093",
   "linux": {
     "chromiumBuild": "chromium-browser-unstable_86.0.4209.0-1_amd64.deb",
     "path": "linux_x64_SUCCEED",
@@ -19,6 +19,6 @@
     "chromiumBuild": "chrome-win32.zip",
     "path": "win_x64_SUCCEED",
     "suffix": "zip",
-    "md5": "91b9e3b8bc821a2be9f78b1cfd5de671"
+    "md5": "85a2b341aad02f2d7bf7dcf787a654fd"
   }
 }

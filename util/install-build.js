@@ -1,29 +1,24 @@
 require("../lib/base.js");
 const {DEV_CHROMIUM_PATH} = require("../settings.js");
-const path = require("path");
+const path = require('path');
 
 (async () => {
-  console.log(`>>> 2-Start install nightly/dev build at ${(new Date()).toLocaleTimeString()}.`);
+  console.log(`>>> 2-Start install chromium build at ${(new Date()).toLocaleTimeString()}.`);
   // Uninstall existed chromium build
   await MODULE_TOOLS.uninstallChromium();
-
-  let localPath;
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    localPath = path.join(GET_CHROMIUM_PATH(), MODULE_JSON.getPath(), MODULE_JSON.getPackage());
-    console.log(`2.2-Go to install nightly build '${localPath}'.`);
+    const localPath = path.join(GET_CHROMIUM_PATH(), MODULE_JSON.getPath(), MODULE_JSON.getPackage());
+    console.log(`2.2-Go to install nightly build (${localPath}).`);
+    await MODULE_TOOLS.install(localPath);
   } else {
-    localPath = DEV_CHROMIUM_PATH;
-    console.log(`2.3-Go to install dev build '${localPath}'.`);
-  }
-
-  await MODULE_TOOLS.install(localPath);
-  
-  if (args.length === 0) {
-    console.log(`>>> 2-Completed install nightly build at ${(new Date()).toLocaleTimeString()}!`);
-  } else {
-    console.log(`>>> 2(rc)-Completed install dev build at ${(new Date()).toLocaleTimeString()}!`);
+    if (TEST_PLATFORM === "linux") {
+      console.log(`2.2(regression test)-Go to install dev build (${DEV_CHROMIUM_PATH}).`);
+      await MODULE_TOOLS.install(DEV_CHROMIUM_PATH);
+    } else if (TEST_PLATFORM === "windows") {
+      console.log(`Don't do anything for testing dev build on Windows.`);
+    }
   }
 })().catch((err) => {
   throw err;
