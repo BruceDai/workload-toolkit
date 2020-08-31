@@ -74,7 +74,13 @@ const CATEGORY_FILTER = {
 
 // skip test such model by backend
 const MODEL_FILTER= {
-  "WASM": ['MobileNet v1 Quant (Caffe2)'],
+  "WASM": [
+    'MobileNet v1 Quant (Caffe2)',
+    'Deeplab 224 (Tensorflow)',
+    'Deeplab 257 (Tensorflow)',
+    'Deeplab 321 (Tensorflow)',
+    'Deeplab 513 (Tensorflow)'
+  ],
   "WebGL": [
     'MobileNet v1 Quant (TFLite)',
     'MobileNet v2 Quant (TFLite)',
@@ -82,7 +88,11 @@ const MODEL_FILTER= {
     'Inception v4 Quant (TFLite)',
     'MobileNet v1 Quant (Caffe2)',
     'SSD MobileNet v1 Quant (TFLite)',
-    'SSD MobileNet v2 Quant (TFLite)'
+    'SSD MobileNet v2 Quant (TFLite)',
+    'Deeplab 224 (Tensorflow)',
+    'Deeplab 257 (Tensorflow)',
+    'Deeplab 321 (Tensorflow)',
+    'Deeplab 513 (Tensorflow)'
   ],
   "clDNN": [
     'MobileNet v1 Quant (TFLite)',
@@ -93,7 +103,11 @@ const MODEL_FILTER= {
     'SSD MobileNet v1 Quant (TFLite)',
     'SSD MobileNet v2 Quant (TFLite)',
     'Tiny Yolo v2 COCO (TFLite)',
-    'Tiny Yolo v2 VOC (TFLite)'
+    'Tiny Yolo v2 VOC (TFLite)',
+    'Deeplab 224 (Tensorflow)',
+    'Deeplab 257 (Tensorflow)',
+    'Deeplab 321 (Tensorflow)',
+    'Deeplab 513 (Tensorflow)'
   ],
   "DNNL": [
     'MobileNet v1 Quant (TFLite)',
@@ -104,7 +118,6 @@ const MODEL_FILTER= {
     'DenseNet 121 (ONNX)',
     'SqueezeNet (OpenVino)',
     'DenseNet 121 (OpenVino)',
-    'MobileNet v1 Quant (Caffe2)',
     'SSD MobileNet v1 Quant (TFLite)',
     'SSD MobileNet v2 Quant (TFLite)',
     'Tiny Yolo v2 COCO (TFLite)',
@@ -131,6 +144,10 @@ const MODEL_FILTER= {
     'Deeplab 257 Atrous (OpenVINO)',
     'Deeplab 321 Atrous (OpenVINO)',
     'Deeplab 513 Atrous (OpenVINO)',
+    'Deeplab 224 (Tensorflow)',
+    'Deeplab 257 (Tensorflow)',
+    'Deeplab 321 (Tensorflow)',
+    'Deeplab 513 (Tensorflow)',
     'Tiny Yolo v2 COCO (TFLite)',
     'Tiny Yolo v2 VOC (TFLite)',
     'Tiny Yolo v2 Face (TFlite)'

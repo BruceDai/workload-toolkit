@@ -17,7 +17,7 @@ const path = require('path');
       console.log(`2.2(regression test)-Go to install dev build (${DEV_CHROMIUM_PATH}).`);
       await MODULE_TOOLS.install(DEV_CHROMIUM_PATH);
     } else if (TEST_PLATFORM === "windows") {
-      console.log(`Don't do anything for testing dev build on Windows.`);
+      console.log(`Don't do installation for testing dev build on Windows.`);
     }
   }
 })().catch((err) => {

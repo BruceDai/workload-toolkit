@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fast-csv/parse": "^4.3.1",
+    "csvtojson": "^2.0.10",
     "moment": "^2.22.2",
     "sleep-promise": "^8.0.1",
     "unzip": "^0.1.11"
@@ -17,14 +18,16 @@
   "devDependencies": {
     "fast-csv": "^2.4.1",
     "cheerio": "*",
+    "jsdom": "^16.4.0",
     "playwright": "^1.2.1"
   },
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
-    "start": "node ./src/main.js",
+    "start": "node ./util/compare-csv.js",
     "downloadbuild": "node ./util/download-build.js",
     "installbuild": "node ./util/install-build.js",
     "test": "node ./util/run-test.js",
+    "compare": "node ./util/compare-csv.js",
     "rc": "node ./src/main.js baseline",
     "rc-full": "node ./src/main.js without-baseline"
   },
