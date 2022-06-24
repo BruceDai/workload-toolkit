@@ -18,7 +18,7 @@
   "devDependencies": {
     "fast-csv": "^2.4.1",
     "cheerio": "*",
-    "jsdom": "^16.4.0",
+    "jsdom": "^16.5.0",
     "playwright": "^1.2.1"
   },
   "scripts": {
